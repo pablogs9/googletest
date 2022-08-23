@@ -34,4 +34,21 @@
 #ifndef GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_H_
 #define GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_H_
 
+#include "/home/pgarrido/dev_safedds/googletest/googletest/src/gtest-internal-inl.h"
+
+class NaiveOsStackTraceGetterInterface : public testing::internal::OsStackTraceGetterInterface {
+    std::string CurrentStackTrace(int max_depth, int skip_count) override {
+        return "";
+    }
+
+    void UponLeavingGTest() override {}
+};
+
+std::string naive_temp_dir() {
+    return "tmp";
+}
+
+#define GTEST_OS_STACK_TRACE_GETTER_ NaiveOsStackTraceGetterInterface
+#define GTEST_CUSTOM_TEMPDIR_FUNCTION_ naive_temp_dir
+
 #endif  // GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_H_

@@ -34,4 +34,79 @@
 #ifndef GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_PORT_H_
 #define GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_PORT_H_
 
+
+// The following macros can be defined:
+
+// ### Logging:
+
+// *   `GTEST_LOG_(severity)`
+// *   `GTEST_CHECK_(condition)`
+// *   Functions `LogToStderr()` and `FlushInfoLog()` have to be provided too.
+
+// ### Threading:
+
+// *   `GTEST_HAS_NOTIFICATION_` - Enabled if Notification is already provided.
+// *   `GTEST_HAS_MUTEX_AND_THREAD_LOCAL_` - Enabled if `Mutex` and `ThreadLocal`
+//     are already provided. Must also provide `GTEST_DECLARE_STATIC_MUTEX_(mutex)`
+//     and `GTEST_DEFINE_STATIC_MUTEX_(mutex)`
+// *   `GTEST_EXCLUSIVE_LOCK_REQUIRED_(locks)`
+// *   `GTEST_LOCK_EXCLUDED_(locks)`
+
+// ### Underlying library support features
+
+// *   `GTEST_HAS_CXXABI_H_`
+
+// ### Exporting API symbols:
+
+// *   `GTEST_API_` - Specifier for exported symbols.
+
+class Notification {
+ public:
+  Notification() : notified_(false) {}
+  Notification(const Notification&) = delete;
+  Notification& operator=(const Notification&) = delete;
+
+  // Notifies all threads created with this notification to start. Must
+  // be called from the controller thread.
+  void Notify() {
+    // std::lock_guard<std::mutex> lock(mu_);
+    notified_ = true;
+    // cv_.notify_all();
+  }
+
+  // Blocks until the controller thread notifies. Must be called from a test
+  // thread.
+  void WaitForNotification() {
+    // std::unique_lock<std::mutex> lock(mu_);
+    // cv_.wait(lock, [this]() { return notified_; });
+  }
+
+ private:
+//   std::mutex mu_;
+//   std::condition_variable cv_;
+  bool notified_;
+};
+
+#define GTEST_LOG_(severity)                                           \
+  ::testing::internal::GTestLog(::testing::internal::GTEST_##severity, \
+                                __FILE__, __LINE__)                    \
+      .GetStream()
+
+#define GTEST_CHECK_(condition)               \
+  GTEST_AMBIGUOUS_ELSE_BLOCKER_               \
+  if (condition) \
+    ;                                         \
+  else                                        \
+    GTEST_LOG_(FATAL) << "Condition " #condition " failed. "
+
+
+#define GTEST_HAS_NOTIFICATION_ 1
+#define GTEST_HAS_MUTEX_AND_THREAD_LOCAL_ 0
+#define GTEST_EXCLUSIVE_LOCK_REQUIRED_(locks)
+#define GTEST_LOCK_EXCLUDED_(locks)
+
+#define GTEST_HAS_CXXABI_H_ 0
+
+#define GTEST_API_
+
 #endif  // GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_PORT_H_

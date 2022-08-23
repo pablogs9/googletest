@@ -254,6 +254,16 @@
 //   GTEST_INTERNAL_DEPRECATED(message) - attribute marking a function as
 //                                        deprecated; calling a marked function
 //                                        should generate a compiler warning
+#define GTEST_HAS_POSIX_RE 0
+#define GTEST_HAS_PTHREAD 0
+#define GTEST_HAS_COMBINE 0
+#define GTEST_HAS_DEATH_TEST 0
+#define GTEST_HAS_TR1_TUPLE 0
+#define GTEST_HAS_STREAM_REDIRECTION 0
+
+extern "C" int fileno(FILE* file) { return 1; };
+extern "C" char* strdup(const char* src) { return (char*)src; };
+extern "C" FILE* fdopen(int fd, const char* mode) { return (FILE*)fd; };
 
 #include <ctype.h>   // for isspace, etc
 #include <stddef.h>  // for ptrdiff_t
