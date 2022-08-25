@@ -261,9 +261,9 @@
 #define GTEST_HAS_TR1_TUPLE 0
 #define GTEST_HAS_STREAM_REDIRECTION 0
 
-extern "C" int fileno(FILE* file) { return 1; };
-extern "C" char* strdup(const char* src) { return (char*)src; };
-extern "C" FILE* fdopen(int fd, const char* mode) { return (FILE*)fd; };
+static int fileno_local(FILE* file) { return 1; };
+static char* strdup_local(const char* src) { return (char*)src; };
+static FILE* fdopen_local(int fd, const char* mode) { return (FILE*)fd; };
 
 #include <ctype.h>   // for isspace, etc
 #include <stddef.h>  // for ptrdiff_t
@@ -1977,7 +1977,7 @@ inline int DoIsATTY(int fd) { return isatty(fd); }
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return stricmp(s1, s2);
 }
-inline char* StrDup(const char* src) { return strdup(src); }
+inline char* StrDup(const char* src) { return strdup_local(src); }
 #else  // !__BORLANDC__
 #if GTEST_OS_WINDOWS_MOBILE || GTEST_OS_ZOS || GTEST_OS_IOS || \
     GTEST_OS_WINDOWS_PHONE || GTEST_OS_WINDOWS_RT || defined(ESP_PLATFORM)
@@ -2005,7 +2005,7 @@ inline bool IsDir(const StatStruct& st) { return (_S_IFDIR & st.st_mode) != 0; }
 #elif GTEST_OS_ESP8266
 typedef struct stat StatStruct;
 
-inline int FileNo(FILE* file) { return fileno(file); }
+inline int FileNo(FILE* file) { return fileno_local(file); }
 inline int DoIsATTY(int fd) { return isatty(fd); }
 inline int Stat(const char* path, StatStruct* buf) {
   // stat function not implemented on ESP8266
@@ -2014,7 +2014,7 @@ inline int Stat(const char* path, StatStruct* buf) {
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return strcasecmp(s1, s2);
 }
-inline char* StrDup(const char* src) { return strdup(src); }
+inline char* StrDup(const char* src) { return strdup_local(src); }
 inline int RmDir(const char* dir) { return rmdir(dir); }
 inline bool IsDir(const StatStruct& st) { return S_ISDIR(st.st_mode); }
 
@@ -2022,13 +2022,13 @@ inline bool IsDir(const StatStruct& st) { return S_ISDIR(st.st_mode); }
 
 typedef struct stat StatStruct;
 
-inline int FileNo(FILE* file) { return fileno(file); }
+inline int FileNo(FILE* file) { return fileno_local(file); }
 inline int DoIsATTY(int fd) { return isatty(fd); }
 inline int Stat(const char* path, StatStruct* buf) { return stat(path, buf); }
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return strcasecmp(s1, s2);
 }
-inline char* StrDup(const char* src) { return strdup(src); }
+inline char* StrDup(const char* src) { return strdup_local(src); }
 inline int RmDir(const char* dir) { return rmdir(dir); }
 inline bool IsDir(const StatStruct& st) { return S_ISDIR(st.st_mode); }
 
@@ -2072,7 +2072,7 @@ inline FILE* FOpen(const char* path, const char* mode) {
 inline FILE* FReopen(const char* path, const char* mode, FILE* stream) {
   return freopen(path, mode, stream);
 }
-inline FILE* FDOpen(int fd, const char* mode) { return fdopen(fd, mode); }
+inline FILE* FDOpen(int fd, const char* mode) { return fdopen_local(fd, mode); }
 #endif
 inline int FClose(FILE* fp) { return fclose(fp); }
 #if !GTEST_OS_WINDOWS_MOBILE
