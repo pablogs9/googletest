@@ -34,7 +34,7 @@
 #ifndef GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_H_
 #define GOOGLETEST_INCLUDE_GTEST_INTERNAL_CUSTOM_GTEST_H_
 
-#include "/home/pgarrido/dev_safedds/googletest/googletest/src/gtest-internal-inl.h"
+#include "../../../../src/gtest-internal-inl.h"
 
 class NaiveOsStackTraceGetterInterface : public testing::internal::OsStackTraceGetterInterface {
     std::string CurrentStackTrace(int max_depth, int skip_count) override {
