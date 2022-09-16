@@ -128,7 +128,7 @@ macro(config_compiler_and_linker)
   endif()
 
   # The pthreads library is available and allowed?
-  if (DEFINED GTEST_HAS_PTHREAD)
+  if (GTEST_HAS_PTHREAD)
     set(GTEST_HAS_PTHREAD_MACRO "-DGTEST_HAS_PTHREAD=1")
   else()
     set(GTEST_HAS_PTHREAD_MACRO "-DGTEST_HAS_PTHREAD=0")
