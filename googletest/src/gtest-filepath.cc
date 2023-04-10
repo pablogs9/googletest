@@ -54,7 +54,7 @@
 #elif defined(_XOPEN_PATH_MAX)
 #define GTEST_PATH_MAX_ _XOPEN_PATH_MAX
 #else
-#define GTEST_PATH_MAX_ _POSIX_PATH_MAX
+# define GTEST_PATH_MAX_ 0
 #endif  // GTEST_OS_WINDOWS
 
 namespace testing {
